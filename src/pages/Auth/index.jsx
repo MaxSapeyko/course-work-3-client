@@ -20,7 +20,7 @@ const Auth = () => {
     <div className={classes.root}>
       <form className='modal'>
         <h3>Введіть пароль адміна</h3>
-        <input autocomplete="on" type='password' className='modal_pass' onChange={(e) => setPass(e.target.value)} />
+        <input autoComplete="on" type='password' className='modal_pass' onChange={(e) => setPass(e.target.value)} />
         <div className='modal_btn-wrapper'>
           <Link to='/directories' className='modal_link' onClick={() => checkAuth()}>
             Check

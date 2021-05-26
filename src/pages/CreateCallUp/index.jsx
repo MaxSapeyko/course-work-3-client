@@ -144,7 +144,6 @@ const CreateCallUp = () => {
         >
           <Input
             placeholder="YYYY-MM-DD"
-            defaultValue={formData.callUpDate}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, callUpDate: e.target.value }))
             }

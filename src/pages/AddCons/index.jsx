@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { addNewConscript } from '../../API/conscript';
 import { addNewRelative } from '../../API/relative';
 import { addNewWorkPlace } from '../../API/work';
+import { addNewStudyPlace } from '../../API/study';
 import { Form, Modal, Input, Button, Select, DatePicker } from 'antd';
 
 import useStyles from './style';
@@ -27,9 +28,16 @@ const AddCons = () => {
     id: 0,
     isDone: false,
   });
-  const [showStudyModal, setShowStudyModal] = useState(false);
-  const [showWorkModal, setShowWorkModal] = useState(false);
-  const [showMedicalModal, setShowMedicalModal] = useState(false);
+  const [studyProps, setStudyProps] = useState({
+    show: false,
+    id: 0,
+    isDone: false,
+  });
+  const [workProps, setWorkProps] = useState({
+    show: false,
+    id: 0,
+    isDone: false,
+  });
 
   const upload = (file) => {
     setFile(file);
@@ -40,9 +48,16 @@ const AddCons = () => {
       setRelativeProps({ isDone: true, id: res.data.id, show: false });
     });
   };
-  const setWorkData = (data) => { };
-  const setStudyData = (data) => { };
-  const setMedicalData = (data) => { };
+  const setWorkData = (data) => {
+    addNewWorkPlace(data.work).then((res) => {
+      setWorkProps({ isDone: true, id: res.data.id, show: false });
+    });
+  };
+  const setStudyData = (data) => {
+    addNewStudyPlace(data.study).then((res) => {
+      setStudyProps({ isDone: true, id: res.data.id, show: false });
+    });
+  };
 
   const submit = (data) => {
     const fd = new FormData();
@@ -57,10 +72,10 @@ const AddCons = () => {
     fd.append('passportCode', data.conscript.passportCode);
     fd.append('registrationNumber', data.conscript.registrationNumber);
     fd.append('phoneNumber', data.conscript.phoneNumber);
-    fd.append('callUpId', data.conscript.callUpId);
-    fd.append('relativeId', data.conscript.relativeId);
-    fd.append('workId', data.conscript.workId);
-    fd.append('studyId', data.conscript.studyId);
+    fd.append('callUpId', 2);
+    fd.append('relativeId', relativeProps.id);
+    fd.append('workId', workProps.id);
+    fd.append('studyId', studyProps.id);
 
     addNewConscript(fd)
       .then(() => console.log('Призовника додано'))
@@ -104,7 +119,7 @@ const AddCons = () => {
           <DatePicker />
         </Form.Item>
         <Form.Item
-          name={['conscript', 'placeOfBirthday']}
+          name={['conscript', 'placeOfBirth']}
           label='Місце народження'
           rules={[{ required: true }]}
         >
@@ -166,18 +181,19 @@ const AddCons = () => {
           </Button>
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-          <Button type='primary' onClick={() => setShowWorkModal(true)}>
+          <Button
+            type='primary'
+            onClick={() => setWorkProps((prev) => ({ ...prev, show: true }))}
+          >
             Ввести дані про роботу
           </Button>
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-          <Button type='primary' onClick={() => setShowStudyModal(true)}>
+          <Button
+            type='primary'
+            onClick={() => setStudyProps((prev) => ({ ...prev, show: true }))}
+          >
             Ввести дані про навчальний заклад
-          </Button>
-        </Form.Item>
-        <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-          <Button type='primary' onClick={() => setShowMedicalModal(true)}>
-            Ввести дані мед огляду
           </Button>
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
@@ -244,9 +260,9 @@ const AddCons = () => {
 
       <Modal
         title='Введіть дані про роботу'
-        visible={showWorkModal}
+        visible={workProps.show}
         footer={null}
-        onCancel={() => setShowWorkModal(false)}
+        onCancel={() => setWorkProps((prev) => ({ ...prev, show: false }))}
       >
         <Form
           {...layout}
@@ -299,9 +315,9 @@ const AddCons = () => {
 
       <Modal
         title='Введіть дані про навчальний заклад'
-        visible={showStudyModal}
+        visible={studyProps.show}
         footer={null}
-        onCancel={() => setShowStudyModal(false)}
+        onCancel={() => setStudyProps((prev) => ({ ...prev, show: false }))}
       >
         <Form
           {...layout}
