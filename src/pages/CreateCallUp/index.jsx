@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { Form, Input, Button, Modal } from "antd";
+import React, { useState } from 'react';
+import { Form, Input, Button, Modal } from 'antd';
 
-import { getCommissariatList } from "../../API/commissariat";
-import { getConscriptList } from "../../API/conscript";
-import { createCallUp } from "../../API/callUp";
+import { getCommissariatList } from '../../API/commissariat';
+import { getConscriptList } from '../../API/conscript';
+import { createCallUp } from '../../API/callUp';
 
-import useStyles from "./style";
+import useStyles from './style';
+import Checkbox from 'antd/lib/checkbox/Checkbox';
 
 const CreateCallUp = () => {
   const classes = useStyles();
@@ -18,14 +19,27 @@ const CreateCallUp = () => {
   };
 
   const [formData, setFormData] = useState({
-    callUpDate: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate(),
+    callUpDate:
+      new Date().getFullYear() +
+      '-' +
+      (new Date().getMonth() + 1) +
+      '-' +
+      new Date().getDate(),
     conscriptList: [],
-    commissariatId: "",
+    commissariatId: '',
   });
+
+  const [data, setData] = useState({
+    conscriptList: [],
+    commissariatList: [],
+  });
+
+  const [showConscriptModal, setShowConscriptModal] = useState(false);
+  // const [showCommissariatModal, setShowCommissariatModal] = useState(false);
 
   const commissariatModal = (commissariatList) => {
     Modal.info({
-      title: "Список комісаріатів",
+      title: 'Список комісаріатів',
       content: (
         <table>
           <thead>
@@ -66,40 +80,9 @@ const CreateCallUp = () => {
   const showCommissariatModal = () => {
     getCommissariatList()
       .then((res) => {
-        commissariatModal(res.data);
+        commissariatModal(res.data, true);
       })
       .catch((error) => console.log(`Error ${error}`));
-  };
-
-  const conscriptModal = (conscriptList) => {
-    Modal.info({
-      title: "Список призовників",
-      content: (
-        <table>
-          <thead>
-            <tr>
-              <td>№</td>
-              <td>ПІБ</td>
-              <td></td>
-              <td />
-            </tr>
-          </thead>
-          <tbody>
-            {conscriptList.map((item, index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{item.lastname + " " + item.name + " " + item.surname}</td>
-                <td></td>
-                <td>
-                  <Button onClick={() => setConscript(item.id)}>Обрати</Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ),
-      onOk() { },
-    });
   };
 
   const setConscript = (conscriptId) => {
@@ -115,17 +98,18 @@ const CreateCallUp = () => {
     setFormData(copyFormData);
   };
 
-  const showConscriptModal = () => {
+  const getConscriptData = () => {
     getConscriptList()
       .then((res) => {
-        conscriptModal(res.data);
+        setData((prev) => ({ ...prev, conscriptList: res.data }));
+        setShowConscriptModal(true);
       })
       .catch((error) => console.log(`Error ${error}`));
   };
 
   const submit = () => {
     createCallUp(formData)
-      .then(() => console.log("Succes"))
+      .then(() => console.log('Succes'))
       .catch((error) => console.log(`Error ${error}`));
   };
 
@@ -133,37 +117,78 @@ const CreateCallUp = () => {
     <div className={classes.root}>
       <Form
         {...layout}
-        name="nest-messages"
+        name='nest-messages'
         onFinish={submit}
         validateMessages={validateMessages}
       >
         <Form.Item
-          name={["callUp", "callUpDate"]}
-          label="Дата призову"
+          name={['callUp', 'callUpDate']}
+          label='Дата призову'
           rules={[{ required: true }]}
         >
           <Input
-            placeholder="YYYY-MM-DD"
+            placeholder='YYYY-MM-DD'
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, callUpDate: e.target.value }))
             }
           />
         </Form.Item>
         <Form.Item
-          name={["callUp", "conscriptList"]}
-          label="Список призовників"
+          name={['callUp', 'conscriptList']}
+          label='Список призовників'
         >
-          <Button onClick={showConscriptModal}>Обрати</Button>
+          <Button onClick={getConscriptData}>Обрати</Button>
         </Form.Item>
-        <Form.Item name={["callUp", "commissariatId"]} label="Комісаріат">
+        <Form.Item name={['callUp', 'commissariatId']} label='Комісаріат'>
           <Button onClick={showCommissariatModal}>Обрати</Button>
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type='primary' htmlType='submit'>
             Додати
           </Button>
         </Form.Item>
       </Form>
+
+      <Modal
+        title='Список призовників'
+        visible={showConscriptModal}
+        footer={false}
+        onCancel={() => setShowConscriptModal(false)}
+      >
+        <table>
+          <thead>
+            <tr>
+              <td>№</td>
+              <td>ПІБ</td>
+              <td></td>
+              <td />
+            </tr>
+          </thead>
+          <tbody>
+            {data.conscriptList.map((item, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td>{item.lastname + ' ' + item.name + ' ' + item.surname}</td>
+                <td></td>
+                <td>
+                  <Checkbox
+                    checked={formData.conscriptList.includes(item.id)}
+                    onClick={() => setConscript(item.id)}
+                  >
+                    Обрати
+                </Checkbox>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <Button
+          type='primary'
+          onClick={() => setShowConscriptModal(false)}
+        >
+          OK
+        </Button>
+      </Modal>;
     </div>
   );
 };

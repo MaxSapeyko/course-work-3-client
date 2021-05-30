@@ -23,11 +23,10 @@ const useStyles = createUseStyles({
       '& .modal_btn-wrapper': {
         paddingTop: '10px',
 
-        '& .modal_link': {
-          backgroundColor: '#969696',
+        '& .modal_btn': {
           padding: '5px 20px',
           borderRadius: '5px',
-          color: '#fff',
+          color: '#000',
           width: '100%',
           height: '100%',
           textDecoration: 'none',

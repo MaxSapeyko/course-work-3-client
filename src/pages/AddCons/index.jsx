@@ -9,6 +9,7 @@ import { Form, Modal, Input, Button, Select, DatePicker } from 'antd';
 import useStyles from './style';
 
 const { Option } = Select;
+
 const AddCons = () => {
   const classes = useStyles();
 
@@ -72,7 +73,6 @@ const AddCons = () => {
     fd.append('passportCode', data.conscript.passportCode);
     fd.append('registrationNumber', data.conscript.registrationNumber);
     fd.append('phoneNumber', data.conscript.phoneNumber);
-    fd.append('callUpId', 2);
     fd.append('relativeId', relativeProps.id);
     fd.append('workId', workProps.id);
     fd.append('studyId', studyProps.id);
@@ -130,7 +130,7 @@ const AddCons = () => {
           label='Стать'
           rules={[{ required: true }]}
         >
-          <Select initialValues='чоловік'>
+          <Select>
             <Option value='чоловік'>чоловік</Option>
             <Option value='жінка'>жінка</Option>
           </Select>

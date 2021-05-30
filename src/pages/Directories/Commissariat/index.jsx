@@ -33,7 +33,6 @@ const Commissariat = () => {
   ]);
 
   const callUpShow = (index) => {
-    console.log(String(commissariatList[index].id));
     getCallUpListByComId(String(commissariatList[index].id))
       .then((res) => {
         setCallUpList(res.data);
