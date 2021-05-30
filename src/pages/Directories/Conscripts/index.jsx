@@ -1,27 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { Modal } from "antd";
+import React, { useEffect, useState, useContext } from 'react';
+import { Modal } from 'antd';
+import { useLocation } from 'react-router';
 
 import {
   getConscriptList,
   getConscriptListByIdArr,
-} from "../../../API/conscript";
-import { getRelativeById } from "../../../API/relative";
-import { getWorkById } from "../../../API/work";
-import { getStudyById } from "../../../API/study";
-import BackBtn from "../../../components/BackToDirBtn/index.jsx";
+  delConscriptById,
+} from '../../../API/conscript';
+import { getRelativeById } from '../../../API/relative';
+import { getWorkById } from '../../../API/work';
+import { getStudyById } from '../../../API/study';
+import BackBtn from '../../../components/BackToDirBtn/index.jsx';
+import { AppContext } from '../../../Context';
 
-import useStyles from "./style";
-import { useLocation } from "react-router";
+import useStyles from './style';
 
 const Conscripts = () => {
   const classes = useStyles();
   const location = useLocation();
+  const { auth } = useContext(AppContext);
 
   const [conscriptList, setConscriptList] = useState([
     {
-      name: "",
-      surname: "",
-      lastname: "",
+      name: '',
+      surname: '',
+      lastname: '',
     },
   ]);
   const [modalProps, setModalProps] = useState({
@@ -30,28 +33,28 @@ const Conscripts = () => {
   });
   const [relative, setRelative] = useState({
     showRelative: false,
-    name: "",
-    surname: "",
-    lastname: "",
-    homeAddress: "",
-    phoneNumber: "",
+    name: '',
+    surname: '',
+    lastname: '',
+    homeAddress: '',
+    phoneNumber: '',
   });
   const [work, setWork] = useState({
     showWork: false,
-    organizationName: "",
-    post: "",
-    admissionDate: "",
-    releaseDate: "",
-    address: "",
+    organizationName: '',
+    post: '',
+    admissionDate: '',
+    releaseDate: '',
+    address: '',
   });
   const [study, setStudy] = useState({
     showStudy: false,
-    organizationName: "",
-    faculty: "",
-    course: "",
-    admissionDate: "",
-    releaseDate: "",
-    address: "",
+    organizationName: '',
+    faculty: '',
+    course: '',
+    admissionDate: '',
+    releaseDate: '',
+    address: '',
   });
 
   const getRelative = (relativeId) => {
@@ -105,20 +108,20 @@ const Conscripts = () => {
   };
 
   useEffect(() => {
-    if (location.state?.state === "part") {
+    if (location.state?.state === 'part') {
       getConscriptListByIdArr(location.state.idArr)
         .then((res) => {
           setConscriptList(res.data);
         })
-        .catch((error) => console.log("Error", error));
+        .catch((error) => console.log('Error', error));
     } else {
       getConscriptList()
         .then((res) => {
           setConscriptList(res.data);
         })
-        .catch((error) => console.log("Error", error));
+        .catch((error) => console.log('Error', error));
     }
-  }, [location.state?.state, location.state?.idArr]);
+  }, [location.state?.state, location.state?.idArr, conscriptList]);
 
   return (
     <div className={classes.root}>
@@ -130,28 +133,29 @@ const Conscripts = () => {
           <tr>
             <th>№</th>
             <th>
-              <button onClick={() => sortConscriptList("lastname")}>
+              <button onClick={() => sortConscriptList('lastname')}>
                 Прізвище
               </button>
             </th>
             <th>
-              <button onClick={() => sortConscriptList("name")}>Ім'я</button>
+              <button onClick={() => sortConscriptList('name')}>Ім'я</button>
             </th>
             <th>
-              <button onClick={() => sortConscriptList("surname")}>
+              <button onClick={() => sortConscriptList('surname')}>
                 По батькові
               </button>
             </th>
             <th>Стать</th>
             <th>Місце народження</th>
             <th>
-              <button onClick={() => sortConscriptList("birthday")}>
+              <button onClick={() => sortConscriptList('birthday')}>
                 Дата народження
               </button>
             </th>
             <th>Номер телефону</th>
             <th>Фото</th>
             <th>Детально</th>
+            {auth && <th />}
           </tr>
         </thead>
         <tbody>
@@ -166,7 +170,7 @@ const Conscripts = () => {
               <td>{item.birthday}</td>
               <td>{item.phoneNumber}</td>
               <td>
-                <img src={process.env.REACT_APP_API_URL + item.photo} alt="" />
+                <img src={process.env.REACT_APP_API_URL + item.photo} alt='' />
               </td>
               <td>
                 <button
@@ -177,21 +181,28 @@ const Conscripts = () => {
                   Показати
                 </button>
               </td>
+              {auth && (
+                <td>
+                  <button onClick={() => delConscriptById(item.id)}>
+                    Видалити
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
       </table>
       <Modal
-        title="Детальна інформація"
+        title='Детальна інформація'
         visible={modalProps.showModal}
         onCancel={() =>
           setModalProps({ showModal: false, selectedListItem: 0 })
         }
-        footer=""
+        footer=''
       >
         <p>
-          {conscriptList[modalProps.selectedListItem].lastname}{" "}
-          {conscriptList[modalProps.selectedListItem].name}{" "}
+          {conscriptList[modalProps.selectedListItem].lastname}{' '}
+          {conscriptList[modalProps.selectedListItem].name}{' '}
           {conscriptList[modalProps.selectedListItem].surname}
         </p>
         <div>

@@ -37,11 +37,11 @@ const CustomHeader = () => {
               Довідники
             </Link>
           </Menu.Item>
-          <Menu.Item key="/auth">
+          {!auth && <Menu.Item key="/auth">
             <Link to="/auth" className="menu_link">
               Auth
             </Link>
-          </Menu.Item>
+          </Menu.Item>}
           {auth &&
             <Menu.Item key="/add-cons">
               <Link to="/add-cons" className="menu_link">

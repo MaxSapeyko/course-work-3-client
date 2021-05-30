@@ -7,3 +7,5 @@ export const getConscriptListByIdArr = (conscriptId) => api.post('/conscript/by-
 });
 
 export const addNewConscript = (file) => api.post('/conscript/add', file)
+
+export const delConscriptById = (conscriptId) => api.delete(`/conscript/delete-by-id${conscriptId}`);
