@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { addNewConscript } from '../../API/conscript';
-import { addNewRelative } from '../../API/relative';
-import { addNewWorkPlace } from '../../API/work';
-import { addNewStudyPlace } from '../../API/study';
+import { addNewRelative, getRelativeList } from '../../API/relative';
+import { addNewWorkPlace, getWorkList } from '../../API/work';
+import { addNewStudyPlace, getStudyList } from '../../API/study';
 import { Form, Modal, Input, Button, Select, DatePicker } from 'antd';
 
 import useStyles from './style';
@@ -25,16 +25,19 @@ const AddCons = () => {
   };
   const [file, setFile] = useState();
   const [relativeProps, setRelativeProps] = useState({
+    relativeList: [],
     show: false,
     id: 0,
     isDone: false,
   });
   const [studyProps, setStudyProps] = useState({
+    studyList: [],
     show: false,
     id: 0,
     isDone: false,
   });
   const [workProps, setWorkProps] = useState({
+    workList: [],
     show: false,
     id: 0,
     isDone: false,
@@ -81,6 +84,18 @@ const AddCons = () => {
       .then(() => console.log('Призовника додано'))
       .catch((error) => console.log(`Error ${error}`));
   };
+
+  useEffect(() => {
+    getStudyList().then((res) => {
+      setStudyProps((prev) => ({ ...prev, studyList: res.data }));
+    });
+    getWorkList().then((res) => {
+      setWorkProps((prev) => ({ ...prev, workList: res.data }));
+    });
+    getRelativeList().then((res) => {
+      setRelativeProps((prev) => ({ ...prev, relativeList: res.data }));
+    });
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -170,6 +185,34 @@ const AddCons = () => {
         >
           <Input />
         </Form.Item>
+        <Form.Item
+          name={['conscript', 'relativeId']}
+          label='Родич (ПІБ, телефон)'
+          rules={[{ required: true }]}
+        >
+          <Select
+            showSearch
+            onChange={(value) =>
+              setRelativeProps((prev) => ({
+                ...prev,
+                isDone: true,
+                id: relativeProps.relativeList.filter((item) => {
+                  if (item.phoneNumber === value.split(',')[1].trim()) {
+                    return item;
+                  }
+                  return null;
+                })[0].id,
+              }))
+            }
+          >
+            {relativeProps.relativeList.map((item, index) => (
+              <Option
+                key={index}
+                value={`${item.lastname} ${item.name} ${item.surname}, ${item.phoneNumber}`}
+              >{`${item.lastname} ${item.name} ${item.surname}, ${item.phoneNumber}`}</Option>
+            ))}
+          </Select>
+        </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button
             type='primary'
@@ -180,6 +223,33 @@ const AddCons = () => {
             Ввести дані родича
           </Button>
         </Form.Item>
+        <Form.Item
+          name={['conscript', 'workId']}
+          label='Робота'
+          rules={[{ required: true }]}
+        >
+          <Select
+            showSearch
+            onChange={(value) =>
+              setWorkProps((prev) => ({
+                ...prev,
+                isDone: true,
+                id: workProps.workList.filter((item) => {
+                  if (item.organizationName === value) {
+                    return item;
+                  }
+                  return null;
+                })[0].id,
+              }))
+            }
+          >
+            {workProps.workList.map((item, index) => (
+              <Option key={index} value={item.organizationName}>
+                {item.organizationName}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button
             type='primary'
@@ -187,6 +257,33 @@ const AddCons = () => {
           >
             Ввести дані про роботу
           </Button>
+        </Form.Item>
+        <Form.Item
+          name={['conscript', 'studyId']}
+          label='Навчальний заклад'
+          rules={[{ required: true }]}
+        >
+          <Select
+            showSearch
+            onChange={(value) =>
+              setStudyProps((prev) => ({
+                ...prev,
+                isDone: true,
+                id: studyProps.studyList.filter((item) => {
+                  if (item.organizationName === value) {
+                    return item;
+                  }
+                  return null;
+                })[0].id,
+              }))
+            }
+          >
+            {studyProps.studyList.map((item, index) => (
+              <Option key={index} value={item.organizationName}>
+                {item.organizationName}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button
@@ -278,32 +375,11 @@ const AddCons = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name={['work', 'post']}
-            label='Посада'
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
             name={['work', 'address']}
             label='Адреса'
             rules={[{ required: true }]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            name={['work', 'admissionDate']}
-            label='Дата прийому'
-            rules={[{ required: true }]}
-          >
-            <DatePicker />
-          </Form.Item>
-          <Form.Item
-            name={['work', 'releaseDate']}
-            label='Дата звільнення'
-            rules={[{ required: true }]}
-          >
-            <DatePicker />
           </Form.Item>
           <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
             <Button type='primary' htmlType='submit'>
@@ -333,39 +409,11 @@ const AddCons = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name={['study', 'faculty']}
-            label='Факультет'
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name={['study', 'course']}
-            label='Курс'
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
             name={['study', 'address']}
             label='Адреса'
             rules={[{ required: true }]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            name={['study', 'admissionDate']}
-            label='Дата вступу'
-            rules={[{ required: true }]}
-          >
-            <DatePicker />
-          </Form.Item>
-          <Form.Item
-            name={['study', 'releaseDate']}
-            label='Дата випуску'
-            rules={[{ required: true }]}
-          >
-            <DatePicker />
           </Form.Item>
           <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
             <Button type='primary' htmlType='submit'>

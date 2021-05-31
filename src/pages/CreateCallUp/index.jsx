@@ -166,6 +166,7 @@ const CreateCallUp = () => {
           </thead>
           <tbody>
             {data.conscriptList.map((item, index) => (
+              item.callUpId === 0 &&
               <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{item.lastname + ' ' + item.name + ' ' + item.surname}</td>
@@ -188,7 +189,7 @@ const CreateCallUp = () => {
         >
           OK
         </Button>
-      </Modal>;
+      </Modal>
     </div>
   );
 };

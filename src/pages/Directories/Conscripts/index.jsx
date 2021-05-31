@@ -121,7 +121,7 @@ const Conscripts = () => {
         })
         .catch((error) => console.log('Error', error));
     }
-  }, [location.state?.state, location.state?.idArr, conscriptList]);
+  }, [location.state?.state, location.state?.idArr]);
 
   return (
     <div className={classes.root}>
@@ -236,9 +236,6 @@ const Conscripts = () => {
           {work.showWork && (
             <div>
               <p>Назва організації: {work.organizationName}</p>
-              <p>Посада: {work.post}</p>
-              <p>Дата прийому на роботу: {work.admissionDate}</p>
-              <p>Дата звільнення: {work.releaseDate}</p>
               <p>Адреса організації: {work.address}</p>
             </div>
           )}
@@ -255,10 +252,6 @@ const Conscripts = () => {
           {study.showStudy && (
             <div>
               <p>Назва організації: {study.organizationName}</p>
-              <p>Факультет: {study.faculty}</p>
-              <p>Курс: {study.course}</p>
-              <p>Дата вступу: {work.admissionDate}</p>
-              <p>Дата випуску: {work.releaseDate}</p>
               <p>Адреса закладу: {work.address}</p>
             </div>
           )}
