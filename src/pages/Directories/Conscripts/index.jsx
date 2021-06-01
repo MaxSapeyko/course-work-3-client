@@ -10,6 +10,7 @@ import {
 import { getRelativeById } from '../../../API/relative';
 import { getWorkById } from '../../../API/work';
 import { getStudyById } from '../../../API/study';
+import { updateCallUpConscriptList } from '../../../API/callUp';
 import BackBtn from '../../../components/BackToDirBtn/index.jsx';
 import { AppContext } from '../../../Context';
 
@@ -101,6 +102,17 @@ const Conscripts = () => {
     return (a, b) => (a[field] > b[field] ? 1 : -1);
   };
 
+  const deleteCons = (id, index) => {
+    delConscriptById(id).then(() => {
+      updateCallUpConscriptList(conscriptList[index].callUpId, id);
+
+      const copyConscriptList = [...conscriptList];
+      copyConscriptList.splice(index, 1);
+
+      setConscriptList(copyConscriptList);
+    });
+  };
+
   const sortConscriptList = (field) => {
     let copyConscriptList = [...conscriptList];
     copyConscriptList.sort(byField(field));
@@ -175,7 +187,10 @@ const Conscripts = () => {
               <td>
                 <button
                   onClick={() =>
-                    setModalProps({ showModal: true, selectedListItem: index })
+                    setModalProps({
+                      showModal: true,
+                      selectedListItem: index,
+                    })
                   }
                 >
                   Показати
@@ -183,7 +198,7 @@ const Conscripts = () => {
               </td>
               {auth && (
                 <td>
-                  <button onClick={() => delConscriptById(item.id)}>
+                  <button onClick={() => deleteCons(item.id, index)}>
                     Видалити
                   </button>
                 </td>
@@ -192,6 +207,7 @@ const Conscripts = () => {
           ))}
         </tbody>
       </table>
+      )
       <Modal
         title='Детальна інформація'
         visible={modalProps.showModal}
