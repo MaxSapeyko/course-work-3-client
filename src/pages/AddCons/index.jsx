@@ -49,17 +49,32 @@ const AddCons = () => {
 
   const setRelativeData = (data) => {
     addNewRelative(data.relative).then((res) => {
-      setRelativeProps({ isDone: true, id: res.data.id, show: false });
+      setRelativeProps((prev) => ({
+        ...prev,
+        isDone: true,
+        id: res.data.id,
+        show: false,
+      }));
     });
   };
   const setWorkData = (data) => {
     addNewWorkPlace(data.work).then((res) => {
-      setWorkProps({ isDone: true, id: res.data.id, show: false });
+      setWorkProps((prev) => ({
+        ...prev,
+        isDone: true,
+        id: res.data.id,
+        show: false,
+      }));
     });
   };
   const setStudyData = (data) => {
     addNewStudyPlace(data.study).then((res) => {
-      setStudyProps({ isDone: true, id: res.data.id, show: false });
+      setStudyProps((prev) => ({
+        ...prev,
+        isDone: true,
+        id: res.data.id,
+        show: false,
+      }));
     });
   };
 
@@ -110,42 +125,42 @@ const AddCons = () => {
           label='Прізвище'
           rules={[{ required: true }]}
         >
-          <Input />
+          <Input placeholder='Введіть прізвище' />
         </Form.Item>
         <Form.Item
           name={['conscript', 'name']}
           label="Ім'я"
           rules={[{ required: true }]}
         >
-          <Input />
+          <Input placeholder="Введіть ім'я" />
         </Form.Item>
         <Form.Item
           name={['conscript', 'surname']}
           label='По батькові'
           rules={[{ required: true }]}
         >
-          <Input />
+          <Input placeholder='Введіть по батькові' />
         </Form.Item>
         <Form.Item
           name={['conscript', 'birthday']}
           label='Дата народження'
           rules={[{ required: true }]}
         >
-          <DatePicker />
+          <DatePicker placeholder='Оберіть дату' />
         </Form.Item>
         <Form.Item
           name={['conscript', 'placeOfBirth']}
           label='Місце народження'
           rules={[{ required: true }]}
         >
-          <Input />
+          <Input placeholder='Введіть місце народження' />
         </Form.Item>
         <Form.Item
           name={['conscript', 'sex']}
           label='Стать'
           rules={[{ required: true }]}
         >
-          <Select>
+          <Select placeholder='Оберіть стать'>
             <Option value='чоловік'>чоловік</Option>
             <Option value='жінка'>жінка</Option>
           </Select>
@@ -155,7 +170,7 @@ const AddCons = () => {
           label='Домашня адреса'
           rules={[{ required: true }]}
         >
-          <Input />
+          <Input placeholder='Введіть домашню адресу' />
         </Form.Item>
         <Form.Item
           name={['conscript', 'photo']}
@@ -169,21 +184,21 @@ const AddCons = () => {
           label='Код паспорту'
           rules={[{ required: true }]}
         >
-          <Input />
+          <Input placeholder='Введіть код паспорту' />
         </Form.Item>
         <Form.Item
           name={['conscript', 'registrationNumber']}
           label='Реєстраційний номер'
           rules={[{ required: true }]}
         >
-          <Input />
+          <Input placeholder='Введіть реєстраційний номер' />
         </Form.Item>
         <Form.Item
           name={['conscript', 'phoneNumber']}
           label='Телефон'
           rules={[{ required: true }]}
         >
-          <Input />
+          <Input placeholder='Введіть номер телефону' />
         </Form.Item>
         <Form.Item
           name={['conscript', 'relativeId']}
@@ -192,6 +207,7 @@ const AddCons = () => {
         >
           <Select
             showSearch
+            placeholder='Введіть ПІБ родича'
             onChange={(value) =>
               setRelativeProps((prev) => ({
                 ...prev,
@@ -230,6 +246,7 @@ const AddCons = () => {
         >
           <Select
             showSearch
+            placeholder='Введіть назву організації'
             onChange={(value) =>
               setWorkProps((prev) => ({
                 ...prev,
@@ -265,6 +282,7 @@ const AddCons = () => {
         >
           <Select
             showSearch
+            placeholder='Введіть назву ВНЗ'
             onChange={(value) =>
               setStudyProps((prev) => ({
                 ...prev,
