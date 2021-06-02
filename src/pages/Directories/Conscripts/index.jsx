@@ -207,7 +207,7 @@ const Conscripts = () => {
           ))}
         </tbody>
       </table>
-      )
+      
       <Modal
         title='Детальна інформація'
         visible={modalProps.showModal}

@@ -35,7 +35,6 @@ const CreateCallUp = () => {
   });
 
   const [showConscriptModal, setShowConscriptModal] = useState(false);
-  // const [showCommissariatModal, setShowCommissariatModal] = useState(false);
 
   const commissariatModal = (commissariatList) => {
     Modal.info({
@@ -51,29 +50,35 @@ const CreateCallUp = () => {
             </tr>
           </thead>
           <tbody>
-            {commissariatList.map((item, index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{item.name}</td>
-                <td>{item.address}</td>
-                <td>
-                  <Button
-                    onClick={() =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        commissariatId: item.id,
-                      }))
-                    }
-                  >
-                    Обрати
-                  </Button>
-                </td>
+            {commissariatList.length > 0 ? (
+              commissariatList.map((item, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{item.name}</td>
+                  <td>{item.address}</td>
+                  <td>
+                    <Button
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          commissariatId: item.id,
+                        }))
+                      }
+                    >
+                      Обрати
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td>Список комісаріатів пустий</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       ),
-      onOk() { },
+      onOk() {},
     });
   };
 
@@ -165,28 +170,36 @@ const CreateCallUp = () => {
             </tr>
           </thead>
           <tbody>
-            {data.conscriptList.map((item, index) => (
-              item.callUpId === 0 &&
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{item.lastname + ' ' + item.name + ' ' + item.surname}</td>
-                <td></td>
-                <td>
-                  <Checkbox
-                    checked={formData.conscriptList.includes(item.id)}
-                    onClick={() => setConscript(item.id)}
-                  >
-                    Обрати
-                </Checkbox>
-                </td>
+            {data.conscriptList.filter((item) => item.callUpId === 0).length ===
+            0 ? (
+              <tr>
+                <td>Призовників не знайдено</td>
               </tr>
-            ))}
+            ) : (
+              data.conscriptList.map(
+                (item, index) =>
+                  item.callUpId === 0 && (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>
+                        {item.lastname + ' ' + item.name + ' ' + item.surname}
+                      </td>
+                      <td></td>
+                      <td>
+                        <Checkbox
+                          checked={formData.conscriptList.includes(item.id)}
+                          onClick={() => setConscript(item.id)}
+                        >
+                          Обрати
+                        </Checkbox>
+                      </td>
+                    </tr>
+                  )
+              )
+            )}
           </tbody>
         </table>
-        <Button
-          type='primary'
-          onClick={() => setShowConscriptModal(false)}
-        >
+        <Button type='primary' onClick={() => setShowConscriptModal(false)}>
           OK
         </Button>
       </Modal>
