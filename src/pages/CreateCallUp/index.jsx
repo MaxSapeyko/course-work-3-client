@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Form, notification, Button, Modal, DatePicker, Radio } from 'antd';
+import { Form, notification, Button, Modal, DatePicker, Radio, Checkbox } from 'antd';
+import { useHistory, withRouter } from 'react-router';
 
 import { getCommissariatList } from '../../API/commissariat';
-import { getConscriptList } from '../../API/conscript';
+import { getConscriptList, updateConscriptCallUpId } from '../../API/conscript';
 import { createCallUp } from '../../API/callUp';
 import { NOTIFICATION_TYPE } from '../../utils/consts';
 
-import useStyles from './style';
-import Checkbox from 'antd/lib/checkbox/Checkbox';
+import {useStyles, useModalStyles} from './style';
+
+const layout = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
+};
+const validateMessages = {
+  required: "Обов'язкове поле!",
+};
 
 const CreateCallUp = () => {
   const classes = useStyles();
-  const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
-  };
-  const validateMessages = {
-    required: "Обов'язкове поле!",
-  };
+  const modalClasses = useModalStyles();
+  const history = useHistory();
 
   const [formData, setFormData] = useState({
     callUpDate:
@@ -51,25 +54,25 @@ const CreateCallUp = () => {
     setFormData(copyFormData);
   };
 
-  const getConscriptData = () => {
-    getConscriptList()
-      .then((res) => {
-        setData((prev) => ({ ...prev, conscriptList: res.data }));
-        setShowConscriptModal(true);
-      })
-      .catch((error) => console.log(`Error ${error}`));
+  const updateCallUpIds = async (conscriptList, callUpId) => {
+    await conscriptList.forEach((item) => {
+      updateConscriptCallUpId(item, callUpId);
+    });
+
+    history.push('/directories');
   };
 
   const submit = () => {
     createCallUp(formData)
-      .then(() => {
+      .then(async (res) => {
+        await updateCallUpIds(formData.conscriptList, res.data.id);
         notification[NOTIFICATION_TYPE.success]({
           message: 'Success',
           description: 'Призов сформовано.',
         });
       })
       .catch((error) => {
-        notification[NOTIFICATION_TYPE.console.error]({
+        notification[NOTIFICATION_TYPE.error]({
           message: 'Error',
           description: `Error ${error.message}`,
         });
@@ -88,6 +91,17 @@ const CreateCallUp = () => {
     getCommissariatList()
       .then((res) => {
         setData((prev) => ({ ...prev, commissariatList: res.data }));
+      })
+      .catch((error) => {
+        notification[NOTIFICATION_TYPE.console.error]({
+          message: 'Error',
+          description: `Error ${error.message}`,
+        });
+      });
+
+    getConscriptList()
+      .then((res) => {
+        setData((prev) => ({ ...prev, conscriptList: res.data }));
       })
       .catch((error) => {
         notification[NOTIFICATION_TYPE.console.error]({
@@ -121,10 +135,12 @@ const CreateCallUp = () => {
           name={['callUp', 'conscriptList']}
           label='Список призовників'
         >
-          <Button onClick={getConscriptData}>Обрати</Button>
-          {formData.conscriptList.length > 0 && 
-            <p>Кількість обраних призовників: {formData.conscriptList.length}</p>
-          }
+          <Button onClick={() => setShowConscriptModal(true)}>Обрати</Button>
+          {formData.conscriptList.length > 0 && (
+            <p>
+              Кількість обраних призовників: {formData.conscriptList.length}
+            </p>
+          )}
         </Form.Item>
         <Form.Item name={['callUp', 'commissariatId']} label='Комісаріат'>
           <Button onClick={() => setShowCommissariatModal(true)}>Обрати</Button>
@@ -143,6 +159,7 @@ const CreateCallUp = () => {
         title='Список призовників'
         visible={showConscriptModal}
         footer={false}
+        className={modalClasses.root}
         onCancel={() => setShowConscriptModal(false)}
       >
         <table>
@@ -190,6 +207,7 @@ const CreateCallUp = () => {
         title='Список комісаріатів'
         visible={showCommissariatModal}
         footer={false}
+        className={modalClasses.root}
         onCancel={() => setShowCommissariatModal(false)}
       >
         <table>
@@ -235,4 +253,4 @@ const CreateCallUp = () => {
   );
 };
 
-export default CreateCallUp;
+export default withRouter(CreateCallUp);
