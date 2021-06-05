@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, notification, Button, Modal, DatePicker, Radio } from 'antd';
 
 import { getCommissariatList } from '../../API/commissariat';
 import { getConscriptList } from '../../API/conscript';
 import { createCallUp } from '../../API/callUp';
+import { NOTIFICATION_TYPE } from '../../utils/consts';
 
 import useStyles from './style';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
@@ -35,60 +36,7 @@ const CreateCallUp = () => {
   });
 
   const [showConscriptModal, setShowConscriptModal] = useState(false);
-
-  const commissariatModal = (commissariatList) => {
-    Modal.info({
-      title: 'Список комісаріатів',
-      content: (
-        <table>
-          <thead>
-            <tr>
-              <td>№</td>
-              <td>Назва</td>
-              <td>Адреса</td>
-              <td />
-            </tr>
-          </thead>
-          <tbody>
-            {commissariatList.length > 0 ? (
-              commissariatList.map((item, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{item.name}</td>
-                  <td>{item.address}</td>
-                  <td>
-                    <Button
-                      onClick={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          commissariatId: item.id,
-                        }))
-                      }
-                    >
-                      Обрати
-                    </Button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td>Список комісаріатів пустий</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      ),
-      onOk() {},
-    });
-  };
-
-  const showCommissariatModal = () => {
-    getCommissariatList()
-      .then((res) => {
-        commissariatModal(res.data, true);
-      })
-      .catch((error) => console.log(`Error ${error}`));
-  };
+  const [showCommissariatModal, setShowCommissariatModal] = useState(false);
 
   const setConscript = (conscriptId) => {
     const copyFormData = { ...formData };
@@ -114,9 +62,40 @@ const CreateCallUp = () => {
 
   const submit = () => {
     createCallUp(formData)
-      .then(() => console.log('Succes'))
-      .catch((error) => console.log(`Error ${error}`));
+      .then(() => {
+        notification[NOTIFICATION_TYPE.success]({
+          message: 'Success',
+          description: 'Призов сформовано.',
+        });
+      })
+      .catch((error) => {
+        notification[NOTIFICATION_TYPE.console.error]({
+          message: 'Error',
+          description: `Error ${error.message}`,
+        });
+      });
   };
+
+  const getCommissariat = () => {
+    const commissariat = data.commissariatList.filter(
+      (item) => item.id === formData.commissariatId
+    );
+
+    return `${commissariat[0].name}, ${commissariat[0].address}`;
+  };
+
+  useEffect(() => {
+    getCommissariatList()
+      .then((res) => {
+        setData((prev) => ({ ...prev, commissariatList: res.data }));
+      })
+      .catch((error) => {
+        notification[NOTIFICATION_TYPE.console.error]({
+          message: 'Error',
+          description: `Error ${error.message}`,
+        });
+      });
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -131,10 +110,10 @@ const CreateCallUp = () => {
           label='Дата призову'
           rules={[{ required: true }]}
         >
-          <Input
+          <DatePicker
             placeholder='YYYY-MM-DD'
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, callUpDate: e.target.value }))
+            onChange={(value) =>
+              setFormData((prev) => ({ ...prev, callUpDate: value }))
             }
           />
         </Form.Item>
@@ -143,9 +122,15 @@ const CreateCallUp = () => {
           label='Список призовників'
         >
           <Button onClick={getConscriptData}>Обрати</Button>
+          {formData.conscriptList.length > 0 && 
+            <p>Кількість обраних призовників: {formData.conscriptList.length}</p>
+          }
         </Form.Item>
         <Form.Item name={['callUp', 'commissariatId']} label='Комісаріат'>
-          <Button onClick={showCommissariatModal}>Обрати</Button>
+          <Button onClick={() => setShowCommissariatModal(true)}>Обрати</Button>
+          {formData.commissariatId && (
+            <p>Обраний комісаріат: {getCommissariat()}</p>
+          )}
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button type='primary' htmlType='submit'>
@@ -199,9 +184,52 @@ const CreateCallUp = () => {
             )}
           </tbody>
         </table>
-        <Button type='primary' onClick={() => setShowConscriptModal(false)}>
-          OK
-        </Button>
+      </Modal>
+
+      <Modal
+        title='Список комісаріатів'
+        visible={showCommissariatModal}
+        footer={false}
+        onCancel={() => setShowCommissariatModal(false)}
+      >
+        <table>
+          <thead>
+            <tr>
+              <td>№</td>
+              <td>Назва</td>
+              <td>Адреса</td>
+              <td />
+            </tr>
+          </thead>
+          <tbody>
+            {data.commissariatList.length > 0 ? (
+              data.commissariatList.map((item, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{item.name}</td>
+                  <td>{item.address}</td>
+                  <td>
+                    <Radio
+                      checked={formData.commissariatId === item.id}
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          commissariatId: item.id,
+                        }))
+                      }
+                    >
+                      Обрати
+                    </Radio>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td>Список комісаріатів пустий</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </Modal>
     </div>
   );
