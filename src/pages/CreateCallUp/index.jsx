@@ -93,7 +93,7 @@ const CreateCallUp = () => {
         setData((prev) => ({ ...prev, commissariatList: res.data }));
       })
       .catch((error) => {
-        notification[NOTIFICATION_TYPE.console.error]({
+        notification[NOTIFICATION_TYPE.error]({
           message: 'Error',
           description: `Error ${error.message}`,
         });
@@ -104,7 +104,7 @@ const CreateCallUp = () => {
         setData((prev) => ({ ...prev, conscriptList: res.data }));
       })
       .catch((error) => {
-        notification[NOTIFICATION_TYPE.console.error]({
+        notification[NOTIFICATION_TYPE.error]({
           message: 'Error',
           description: `Error ${error.message}`,
         });

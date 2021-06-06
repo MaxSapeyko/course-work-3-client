@@ -15,6 +15,7 @@ import BackBtn from '../../../components/BackToDirBtn/index.jsx';
 import { AppContext } from '../../../Context';
 
 import useStyles from './style';
+import BirthdayModal from './BirthdayModal';
 
 const Conscripts = () => {
   const classes = useStyles();
@@ -28,6 +29,8 @@ const Conscripts = () => {
       lastname: '',
     },
   ]);
+  const [isVisibleBithdayModal, setIsVisibleBithdayModal] = useState(false);
+
   const [modalProps, setModalProps] = useState({
     showModal: false,
     selectedListItem: 0,
@@ -113,9 +116,10 @@ const Conscripts = () => {
     });
   };
 
-  const sortConscriptList = (field) => {
+  const sortConscriptList = async (field) => {
     let copyConscriptList = [...conscriptList];
-    copyConscriptList.sort(byField(field));
+    await copyConscriptList.sort(byField(field));
+
     setConscriptList(copyConscriptList);
   };
 
@@ -160,7 +164,7 @@ const Conscripts = () => {
             <th>Стать</th>
             <th>Місце народження</th>
             <th>
-              <button onClick={() => sortConscriptList('birthday')}>
+              <button onClick={() => setIsVisibleBithdayModal(true)}>
                 Дата народження
               </button>
             </th>
@@ -207,7 +211,7 @@ const Conscripts = () => {
           ))}
         </tbody>
       </table>
-      
+
       <Modal
         title='Детальна інформація'
         visible={modalProps.showModal}
@@ -273,6 +277,12 @@ const Conscripts = () => {
           )}
         </div>
       </Modal>
+
+      <BirthdayModal
+        isVisible={isVisibleBithdayModal}
+        setVisible={setIsVisibleBithdayModal}
+        setConscriptList={setConscriptList}
+      />
     </div>
   );
 };
