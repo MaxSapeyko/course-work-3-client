@@ -5,6 +5,9 @@ export const getConscriptList = () => api.get('/conscript');
 export const getSortedByBirthday = (start, end) =>
   api.get(`/conscript/sort-by-birthday/${start}/${end}`);
 
+export const getSortedByLastname = (inputStr) =>
+  api.get(`/conscript/sort-by-lastname/${inputStr}`);
+
 export const getConscriptListByIdArr = (conscriptId) =>
   api.post('/conscript/by-idArr', {
     conscriptId,

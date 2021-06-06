@@ -10,7 +10,6 @@ const BirthdayModal = ({ isVisible, setVisible, setConscriptList }) => {
   const [dateInterval, setDateInterval] = useState([]);
 
   const handleOk = () => {
-    console.log(dateInterval);
     if (dateInterval.length === 2) {
       getSortedByBirthday(dateInterval[0], dateInterval[1]).then((res) => {
         setConscriptList(res.data);

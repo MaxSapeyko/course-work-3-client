@@ -1,6 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Modal } from 'antd';
+import { Modal, Button, notification } from 'antd';
 import { useLocation } from 'react-router';
+import {
+  SortAscendingOutlined,
+  SortDescendingOutlined,
+  SwapOutlined,
+} from '@ant-design/icons';
 
 import {
   getConscriptList,
@@ -11,11 +16,13 @@ import { getRelativeById } from '../../../API/relative';
 import { getWorkById } from '../../../API/work';
 import { getStudyById } from '../../../API/study';
 import { updateCallUpConscriptList } from '../../../API/callUp';
-import BackBtn from '../../../components/BackToDirBtn/index.jsx';
 import { AppContext } from '../../../Context';
+import BackBtn from '../../../components/BackToDirBtn/index.jsx';
+import BirthdayModal from './BirthdayModal';
+import LastnameModal from './LastnameModal';
+import { NOTIFICATION_TYPE } from '../../../utils/consts';
 
 import useStyles from './style';
-import BirthdayModal from './BirthdayModal';
 
 const Conscripts = () => {
   const classes = useStyles();
@@ -30,6 +37,7 @@ const Conscripts = () => {
     },
   ]);
   const [isVisibleBithdayModal, setIsVisibleBithdayModal] = useState(false);
+  const [isVisibleLastnameModal, setIsVisibleLastnameModal] = useState(false);
 
   const [modalProps, setModalProps] = useState({
     showModal: false,
@@ -123,19 +131,42 @@ const Conscripts = () => {
     setConscriptList(copyConscriptList);
   };
 
+  const delFilters = () => {
+    getConscriptList()
+      .then((res) => {
+        setConscriptList(res.data);
+      })
+      .catch((error) => {
+        notification[NOTIFICATION_TYPE.error]({
+          message: 'Error',
+          description: `Error ${error.message}`,
+        });
+      });
+  };
+
   useEffect(() => {
     if (location.state?.state === 'part') {
       getConscriptListByIdArr(location.state.idArr)
         .then((res) => {
           setConscriptList(res.data);
         })
-        .catch((error) => console.log('Error', error));
+        .catch((error) => {
+          notification[NOTIFICATION_TYPE.error]({
+            message: 'Error',
+            description: `Error ${error.message}`,
+          });
+        });
     } else {
       getConscriptList()
         .then((res) => {
           setConscriptList(res.data);
         })
-        .catch((error) => console.log('Error', error));
+        .catch((error) => {
+          notification[NOTIFICATION_TYPE.error]({
+            message: 'Error',
+            description: `Error ${error.message}`,
+          });
+        });
     }
   }, [location.state?.state, location.state?.idArr]);
 
@@ -143,34 +174,84 @@ const Conscripts = () => {
     <div className={classes.root}>
       <BackBtn />
       <h2>Список призовників</h2>
+      <Button onClick={() => delFilters()} type='primary'>
+        Відмінити фільтрацію
+      </Button>
       <p>***Доступне сортування за ПІБ та датою народження</p>
       <table>
         <thead>
           <tr>
             <th>№</th>
             <th>
-              <button onClick={() => sortConscriptList('lastname')}>
-                Прізвище
-              </button>
+              <div className='th_block'>
+                <Button onClick={() => setIsVisibleLastnameModal(true)}>
+                  Прізвище
+                </Button>
+                <Button
+                  onClick={() => sortConscriptList('lastname')}
+                  type='primary'
+                  icon={[<SortAscendingOutlined />, <SortDescendingOutlined />]}
+                  style={{ width: '70px' }}
+                />
+              </div>
             </th>
             <th>
-              <button onClick={() => sortConscriptList('name')}>Ім'я</button>
+              <div className='th_block'>
+                <p>Ім'я</p>
+                <Button
+                  onClick={() => sortConscriptList('name')}
+                  type='primary'
+                  icon={[<SortAscendingOutlined />, <SortDescendingOutlined />]}
+                  style={{ width: '70px' }}
+                />
+              </div>
             </th>
             <th>
-              <button onClick={() => sortConscriptList('surname')}>
-                По батькові
-              </button>
+              <div className='th_block'>
+                <p>По батькові</p>
+                <Button
+                  onClick={() => sortConscriptList('surname')}
+                  type='primary'
+                  icon={[<SortAscendingOutlined />, <SortDescendingOutlined />]}
+                  style={{ width: '70px' }}
+                />
+              </div>
             </th>
-            <th>Стать</th>
-            <th>Місце народження</th>
             <th>
-              <button onClick={() => setIsVisibleBithdayModal(true)}>
-                Дата народження
-              </button>
+              <div className='th_block th_block-sex'>
+                <p>Стать</p>
+              </div>
             </th>
-            <th>Номер телефону</th>
-            <th>Фото</th>
-            <th>Детально</th>
+            <th>
+              <div className='th_block'>
+                <p>Місце народження</p>
+              </div>
+            </th>
+            <th>
+              <div className='th_block'>
+                <p>Дата народження</p>
+                <Button
+                  onClick={() => setIsVisibleBithdayModal(true)}
+                  type='primary'
+                  icon={<SwapOutlined />}
+                />
+              </div>
+            </th>
+            <th>
+              <div className='th_block'>
+                <p>Номер телефону</p>
+              </div>
+            </th>
+            <th>
+              <div className='th_block th_block-photo'>
+                <p>Фото</p>
+              </div>
+            </th>
+            <th>
+              <div className='th_block th_block-more'>
+                <p>Детально</p>
+              </div>
+            </th>
             {auth && <th />}
           </tr>
         </thead>
@@ -281,6 +362,12 @@ const Conscripts = () => {
       <BirthdayModal
         isVisible={isVisibleBithdayModal}
         setVisible={setIsVisibleBithdayModal}
+        setConscriptList={setConscriptList}
+      />
+
+      <LastnameModal
+        isVisible={isVisibleLastnameModal}
+        setVisible={setIsVisibleLastnameModal}
         setConscriptList={setConscriptList}
       />
     </div>
