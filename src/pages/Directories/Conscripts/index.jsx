@@ -22,10 +22,11 @@ import BirthdayModal from './BirthdayModal';
 import LastnameModal from './LastnameModal';
 import { NOTIFICATION_TYPE } from '../../../utils/consts';
 
-import useStyles from './style';
+import { useStyles, showMoreStyles} from './style';
 
 const Conscripts = () => {
   const classes = useStyles();
+  const showMoreClasses = showMoreStyles();
   const location = useLocation();
   const { auth } = useContext(AppContext);
 
@@ -299,7 +300,8 @@ const Conscripts = () => {
         onCancel={() =>
           setModalProps({ showModal: false, selectedListItem: 0 })
         }
-        footer=''
+        className={showMoreClasses.root}
+        footer={null}
       >
         <p>
           {conscriptList[modalProps.selectedListItem].lastname}{' '}
@@ -307,8 +309,9 @@ const Conscripts = () => {
           {conscriptList[modalProps.selectedListItem].surname}
         </p>
         <div>
-          <p>Родич</p>
+          <p className='title'>Родич</p>
           <button
+            className='show-btn'
             onClick={() =>
               getRelative(conscriptList[modalProps.selectedListItem].relativeId)
             }
@@ -326,8 +329,9 @@ const Conscripts = () => {
           )}
         </div>
         <div>
-          <p>Робота</p>
+          <p className='title'>Робота</p>
           <button
+            className='show-btn'
             onClick={() =>
               getWork(conscriptList[modalProps.selectedListItem].workId)
             }
@@ -342,8 +346,9 @@ const Conscripts = () => {
           )}
         </div>
         <div>
-          <p>Освіта</p>
+          <p className='title'>Освіта</p>
           <button
+            className='show-btn'
             onClick={() =>
               getStudy(conscriptList[modalProps.selectedListItem].studyId)
             }

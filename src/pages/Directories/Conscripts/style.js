@@ -1,6 +1,6 @@
 import { createUseStyles } from 'react-jss';
 
-const useStyles = createUseStyles({
+export const useStyles = createUseStyles({
   root: {
     margin: '40px auto',
     minHeight: '77vh',
@@ -39,4 +39,15 @@ const useStyles = createUseStyles({
   }
 })
 
-export default useStyles;
+export const showMoreStyles = createUseStyles({
+  root: {
+
+    '& .title': {
+      borderTop: '1px solid #000',
+    },
+
+    '& .show-btn': {
+      marginBottom: '10px',
+    },
+  }
+});

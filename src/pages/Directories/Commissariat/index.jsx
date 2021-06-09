@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Modal } from "antd";
+import { Modal, notification } from "antd";
 
 import { getCommissariatList } from "../../../API/commissariat";
 import { getCallUpListByComId } from "../../../API/callUp";
 import BackBtn from "../../../components/BackToDirBtn/index.jsx";
+import { NOTIFICATION_TYPE } from '../../../utils/consts';
 
 import useStyles from "./style";
 
@@ -13,12 +14,9 @@ const Commissariat = () => {
 
   const [commissariatList, setCommissariatList] = useState([
     {
-      id: "",
       name: "",
       address: "",
-      surname: "",
-      lastname: "",
-      callUpsId: "",
+      phoneNumber: "",
     },
   ]);
   const [modalProps, setModalProps] = useState({
@@ -37,7 +35,12 @@ const Commissariat = () => {
       .then((res) => {
         setCallUpList(res.data);
       })
-      .catch((error) => console.log(`Error ${error}`));
+      .catch((error) => {
+        notification[NOTIFICATION_TYPE.error]({
+          message: 'Error',
+          description: `Error ${error.message}`,
+        });
+      });
     setModalProps({ showModal: true, selectedListItem: index });
   };
 
@@ -56,7 +59,12 @@ const Commissariat = () => {
       .then((res) => {
         setCommissariatList(res.data);
       })
-      .catch((error) => console.log("Error ", error));
+      .catch((error) => {
+        notification[NOTIFICATION_TYPE.error]({
+          message: 'Error',
+          description: `Error ${error.message}`,
+        });
+      });
   }, []);
 
   return (
@@ -83,7 +91,6 @@ const Commissariat = () => {
               </button>
             </th>
             <th>Телефон</th>
-            <th>Email</th>
             <th>Список призовів</th>
           </tr>
         </thead>
@@ -94,7 +101,6 @@ const Commissariat = () => {
               <td>{item.name}</td>
               <td>{item.address}</td>
               <td>{item.phoneNumber}</td>
-              <td>{item.email}</td>
               <td>
                 <button onClick={() => callUpShow(index)}>Переглянути</button>
               </td>

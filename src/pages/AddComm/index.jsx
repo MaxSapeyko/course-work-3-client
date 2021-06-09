@@ -13,9 +13,6 @@ const AddComm = () => {
   };
   const validateMessages = {
     required: "Обов'язкове поле!",
-    types: {
-      email: "$Некоректний email!",
-    },
   };
 
   const submit = (data) => {
@@ -43,13 +40,6 @@ const AddComm = () => {
           name={["commissariat", "address"]}
           label="Адреса"
           rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name={["commissariat", "email"]}
-          label="Email"
-          rules={[{ type: "email", required: true }]}
         >
           <Input />
         </Form.Item>
