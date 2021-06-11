@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
+import { NOTIFICATION_TYPE } from '../../utils/consts';
 import { addNewConscript } from '../../API/conscript';
 import { addNewRelative, getRelativeList } from '../../API/relative';
 import { addNewWorkPlace, getWorkList } from '../../API/work';
 import { addNewStudyPlace, getStudyList } from '../../API/study';
-import { Form, Modal, Input, Button, Select, DatePicker } from 'antd';
+import { Form, Modal, Input, Button, Select, DatePicker, notification } from 'antd';
 
 import useStyles from './style';
 
@@ -12,6 +14,8 @@ const { Option } = Select;
 
 const AddCons = () => {
   const classes = useStyles();
+
+  const history = useHistory();
 
   const layout = {
     labelCol: { span: 8 },
@@ -96,8 +100,19 @@ const AddCons = () => {
     fd.append('studyId', studyProps.id);
 
     addNewConscript(fd)
-      .then(() => console.log('Призовника додано'))
-      .catch((error) => console.log(`Error ${error}`));
+      .then(() => {
+        notification[NOTIFICATION_TYPE.success]({
+          message: 'Success',
+          description: 'Призовника додано!',
+        });
+        history.push('/conscripts')
+      })
+      .catch((error) => {
+        notification[NOTIFICATION_TYPE.error]({
+          message: 'Error',
+          description: `Error ${error.message}`,
+        });
+      });
   };
 
   useEffect(() => {
@@ -221,9 +236,9 @@ const AddCons = () => {
               }))
             }
           >
-            {relativeProps.relativeList.map((item, index) => (
+            {relativeProps.relativeList.map((item) => (
               <Option
-                key={index}
+                key={item.id}
                 value={`${item.lastname} ${item.name} ${item.surname}, ${item.phoneNumber}`}
               >{`${item.lastname} ${item.name} ${item.surname}, ${item.phoneNumber}`}</Option>
             ))}
@@ -260,8 +275,8 @@ const AddCons = () => {
               }))
             }
           >
-            {workProps.workList.map((item, index) => (
-              <Option key={index} value={item.organizationName}>
+            {workProps.workList.map((item) => (
+              <Option key={item.id} value={item.organizationName}>
                 {item.organizationName}
               </Option>
             ))}
@@ -296,8 +311,8 @@ const AddCons = () => {
               }))
             }
           >
-            {studyProps.studyList.map((item, index) => (
-              <Option key={index} value={item.organizationName}>
+            {studyProps.studyList.map((item) => (
+              <Option key={item.id} value={item.organizationName}>
                 {item.organizationName}
               </Option>
             ))}

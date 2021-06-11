@@ -357,7 +357,7 @@ const Conscripts = () => {
           </button>
           {study.showStudy && (
             <div>
-              <p>Назва організації: {study.organizationName}</p>
+              <p>Назва навчального закладу: {study.organizationName}</p>
               <p>Адреса закладу: {work.address}</p>
             </div>
           )}

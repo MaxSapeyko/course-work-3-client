@@ -1,11 +1,16 @@
-import React from "react";
-import { Form, Input, Button } from "antd";
-import { createNewCommissariat } from '../../API/commissariat';
+import React from 'react';
+import { Form, Input, Button, notification } from 'antd';
+import { useHistory } from 'react-router-dom';
 
-import useStyles from "./style";
+import { createNewCommissariat } from '../../API/commissariat';
+import { NOTIFICATION_TYPE } from '../../utils/consts';
+
+import useStyles from './style';
 
 const AddComm = () => {
   const classes = useStyles();
+  
+  const history = useHistory();
 
   const layout = {
     labelCol: { span: 8 },
@@ -17,41 +22,52 @@ const AddComm = () => {
 
   const submit = (data) => {
     createNewCommissariat(data.commissariat)
-      .then(() => console.log('Комісаріат додано'))
-      .catch((error) => console.log(`Error ${error}`))
+      .then(() => {
+        notification[NOTIFICATION_TYPE.success]({
+          message: 'Success',
+          description: 'Комісаріат додано!',
+        });
+        history.push('/commissariat');
+      })
+      .catch((error) => {
+        notification[NOTIFICATION_TYPE.error]({
+          message: 'Error',
+          description: `Error ${error.message}`,
+        });
+      });
   };
 
   return (
     <div className={classes.root}>
       <Form
         {...layout}
-        name="nest-messages"
+        name='nest-messages'
         onFinish={submit}
         validateMessages={validateMessages}
       >
         <Form.Item
-          name={["commissariat", "name"]}
-          label="Назва комісаріату"
+          name={['commissariat', 'name']}
+          label='Назва комісаріату'
           rules={[{ required: true }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
-          name={["commissariat", "address"]}
-          label="Адреса"
+          name={['commissariat', 'address']}
+          label='Адреса'
           rules={[{ required: true }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
-          name={["commissariat", "phoneNumber"]}
-          label="Телефон"
+          name={['commissariat', 'phoneNumber']}
+          label='Телефон'
           rules={[{ required: true }]}
         >
           <Input />
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type='primary' htmlType='submit'>
             Додати
           </Button>
         </Form.Item>
