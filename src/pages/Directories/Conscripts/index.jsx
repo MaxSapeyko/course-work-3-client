@@ -151,16 +151,29 @@ const Conscripts = () => {
   };
 
   const delFilters = () => {
-    getConscriptList()
-      .then((res) => {
-        setConscriptList(res.data);
-      })
-      .catch((error) => {
-        notification[NOTIFICATION_TYPE.error]({
-          message: 'Error',
-          description: `Error ${error.message}`,
+    if (location.state?.state === 'part') {
+      getConscriptListByIdArr(location.state.idArr)
+        .then((res) => {
+          setConscriptList(res.data);
+        })
+        .catch((error) => {
+          notification[NOTIFICATION_TYPE.error]({
+            message: 'Error',
+            description: `Error ${error.message}`,
+          });
         });
-      });
+    } else {
+      getConscriptList()
+        .then((res) => {
+          setConscriptList(res.data);
+        })
+        .catch((error) => {
+          notification[NOTIFICATION_TYPE.error]({
+            message: 'Error',
+            description: `Error ${error.message}`,
+          });
+        });
+    }
   };
 
   useEffect(() => {
