@@ -22,7 +22,7 @@ import BirthdayModal from './BirthdayModal';
 import LastnameModal from './LastnameModal';
 import { NOTIFICATION_TYPE } from '../../../utils/consts';
 
-import { useStyles, showMoreStyles} from './style';
+import { useStyles, showMoreStyles } from './style';
 
 const Conscripts = () => {
   const classes = useStyles();
@@ -39,6 +39,7 @@ const Conscripts = () => {
   ]);
   const [isVisibleBithdayModal, setIsVisibleBithdayModal] = useState(false);
   const [isVisibleLastnameModal, setIsVisibleLastnameModal] = useState(false);
+  const [sortStatus, setSortStatus] = useState(false);
 
   const [modalProps, setModalProps] = useState({
     showModal: false,
@@ -110,10 +111,6 @@ const Conscripts = () => {
     });
   };
 
-  const byField = (field) => {
-    return (a, b) => (a[field] > b[field] ? 1 : -1);
-  };
-
   const deleteCons = (id, index) => {
     delConscriptById(id).then(() => {
       updateCallUpConscriptList(conscriptList[index].callUpId, id);
@@ -127,7 +124,28 @@ const Conscripts = () => {
 
   const sortConscriptList = async (field) => {
     let copyConscriptList = [...conscriptList];
-    await copyConscriptList.sort(byField(field));
+
+    setSortStatus((prev) => !prev);
+
+    if (!sortStatus) {
+      await copyConscriptList.sort((a, b) =>
+        a[field].toLowerCase() > b[field].toLowerCase()
+          ? 1
+          : b[field].toLowerCase() > a[field].toLowerCase()
+          ? -1
+          : 0
+      );
+    }
+
+    if (sortStatus) {
+      await copyConscriptList.sort((a, b) =>
+        a[field].toLowerCase() < b[field].toLowerCase()
+          ? 1
+          : b[field].toLowerCase() < a[field].toLowerCase()
+          ? -1
+          : 0
+      );
+    }
 
     setConscriptList(copyConscriptList);
   };
