@@ -5,6 +5,7 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    minHeight: 'calc(100vh - 108px - 61px)',
 
     '& .dir_item': {
       width: '50%',

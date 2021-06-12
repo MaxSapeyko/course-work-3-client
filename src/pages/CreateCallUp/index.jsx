@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Form, notification, Button, Modal, DatePicker, Radio, Checkbox } from 'antd';
+import {
+  Form,
+  notification,
+  Button,
+  Modal,
+  DatePicker,
+  Radio,
+  Checkbox,
+} from 'antd';
 import { useHistory, withRouter } from 'react-router';
 
 import { getCommissariatList } from '../../API/commissariat';
@@ -7,7 +15,7 @@ import { getConscriptList, updateConscriptCallUpId } from '../../API/conscript';
 import { createCallUp } from '../../API/callUp';
 import { NOTIFICATION_TYPE } from '../../utils/consts';
 
-import {useStyles, useModalStyles} from './style';
+import { useStyles, useModalStyles } from './style';
 
 const layout = {
   labelCol: { span: 8 },
@@ -221,26 +229,29 @@ const CreateCallUp = () => {
           </thead>
           <tbody>
             {data.commissariatList.length > 0 ? (
-              data.commissariatList.map((item, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{item.name}</td>
-                  <td>{item.address}</td>
-                  <td>
-                    <Radio
-                      checked={formData.commissariatId === item.id}
-                      onClick={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          commissariatId: item.id,
-                        }))
-                      }
-                    >
-                      Обрати
-                    </Radio>
-                  </td>
-                </tr>
-              ))
+              data.commissariatList.map(
+                (item, index) =>
+                  item.id !== 0 && (
+                    <tr key={index}>
+                      <td>{index}</td>
+                      <td>{item.name}</td>
+                      <td>{item.address}</td>
+                      <td>
+                        <Radio
+                          checked={formData.commissariatId === item.id}
+                          onClick={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              commissariatId: item.id,
+                            }))
+                          }
+                        >
+                          Обрати
+                        </Radio>
+                      </td>
+                    </tr>
+                  )
+              )
             ) : (
               <tr>
                 <td>Список комісаріатів пустий</td>

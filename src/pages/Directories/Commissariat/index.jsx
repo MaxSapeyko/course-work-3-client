@@ -96,15 +96,17 @@ const Commissariat = () => {
         </thead>
         <tbody>
           {commissariatList.map((item, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{item.name}</td>
-              <td>{item.address}</td>
-              <td>{item.phoneNumber}</td>
-              <td>
-                <button onClick={() => callUpShow(index)}>Переглянути</button>
-              </td>
-            </tr>
+           item.id !== 0 && (
+              <tr key={index}>
+                <td>{index}</td>
+                <td>{item.name}</td>
+                <td>{item.address}</td>
+                <td>{item.phoneNumber}</td>
+                <td>
+                  <button onClick={() => callUpShow(index)}>Переглянути</button>
+                </td>
+              </tr>
+           )
           ))}
         </tbody>
       </table>

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import firstImg from '../../assets/img/info_first_item.jpg';
-import secondImg from '../../assets/img/info_second_item.jpg';
-import thirdImg from '../../assets/img/info_third_item.jpg';
+import firstImg from '../../assets/img/info_first_item.png';
+import secondImg from '../../assets/img/info_second_item.png';
+import thirdImg from '../../assets/img/info_third_item.png';
 
 import useStyles from './style';
 

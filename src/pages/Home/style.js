@@ -3,8 +3,8 @@ import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
   root: {
+    marginTop: '40px',
     minHeight: '100vh',
-
     '& .info_title': {
 
     },

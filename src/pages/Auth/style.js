@@ -2,7 +2,7 @@ import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
   root: {
-    minHeight: '90vh',
+    minHeight: 'calc(100vh - 169px)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
