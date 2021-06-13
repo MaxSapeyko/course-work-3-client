@@ -28,6 +28,7 @@ const Conscripts = () => {
   const classes = useStyles();
   const showMoreClasses = showMoreStyles();
   const location = useLocation();
+
   const { auth } = useContext(AppContext);
 
   const [conscriptList, setConscriptList] = useState([
@@ -315,9 +316,9 @@ const Conscripts = () => {
               </td>
               {auth && (
                 <td>
-                  <button onClick={() => deleteCons(item.id, index)}>
+                  <Button danger type='primary' onClick={() => deleteCons(item.id, index)}>
                     Видалити
-                  </button>
+                  </Button>
                 </td>
               )}
             </tr>
@@ -339,6 +340,12 @@ const Conscripts = () => {
           {conscriptList[modalProps.selectedListItem].name}{' '}
           {conscriptList[modalProps.selectedListItem].surname}
         </p>
+        {auth && 
+          <div>
+          <p>Код паспорта: {conscriptList[modalProps.selectedListItem].passportCode}</p>
+          <p>Ідентифікаційний код: {conscriptList[modalProps.selectedListItem].registrationNumber}</p>
+          </div>
+        }
         <div>
           <p className='title'>Родич</p>
           <button

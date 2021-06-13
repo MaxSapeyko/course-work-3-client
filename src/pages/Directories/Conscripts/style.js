@@ -16,7 +16,8 @@ export const useStyles = createUseStyles({
         justifyContent: 'space-around',
         width: '100px',
         height: '80px',
-
+        margin: '0 auto',
+        
         '& p': {
           marginBottom: '5px',
         }
